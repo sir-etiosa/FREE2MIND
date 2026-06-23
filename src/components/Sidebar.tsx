@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const NAV = [
   {
@@ -139,7 +139,14 @@ const NAV = [
 
 export function Sidebar() {
   const path = usePathname();
+  const router = useRouter();
   const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+
+  async function signOut() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+    router.refresh();
+  }
 
   return (
     <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-line bg-surface/70 px-3 py-5 backdrop-blur overflow-y-auto">
@@ -166,6 +173,15 @@ export function Sidebar() {
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-nebula">Signed in</p>
         <p className="mt-1 text-sm font-medium text-ink">Jordan Hale</p>
         <p className="text-xs text-muted">Attorney · Full access</p>
+        <button
+          onClick={signOut}
+          className="mt-3 flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-medium text-muted transition hover:bg-danger/10 hover:text-danger"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+          </svg>
+          Sign out
+        </button>
       </div>
     </aside>
   );
